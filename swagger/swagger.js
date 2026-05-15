@@ -1,0 +1,341 @@
+const swaggerSpec = {
+  openapi: '3.0.0',
+  info: {
+    title: 'Natours API',
+    version: '1.0.0',
+    description: 'Swagger documentation for Natours routes'
+  },
+  servers: [
+    { url: 'http://localhost:3000', description: 'Local development server' }
+  ],
+  tags: [
+    { name: 'Tours', description: 'Tour operations' },
+    { name: 'Users', description: 'User and auth operations' },
+    { name: 'Reviews', description: 'Review operations' }
+  ],
+  components: {
+    securitySchemes: {
+      bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }
+    },
+    schemas: {
+      Tour: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          duration: { type: 'integer' },
+          difficulty: { type: 'string' },
+          price: { type: 'number' }
+        }
+      },
+      User: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          email: { type: 'string', format: 'email' },
+          password: { type: 'string' }
+        }
+      },
+      Review: {
+        type: 'object',
+        properties: {
+          review: { type: 'string' },
+          rating: { type: 'number' },
+          tour: { type: 'string' }
+        }
+      }
+    }
+  },
+  paths: {
+    '/api/v1/tours': {
+      get: {
+        tags: ['Tours'],
+        summary: 'Get all tours',
+        responses: { '200': { description: 'List of tours' } }
+      },
+      post: {
+        tags: ['Tours'],
+        summary: 'Create a new tour',
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/Tour' }
+            }
+          }
+        },
+        responses: { '201': { description: 'Tour created' } }
+      }
+    },
+    '/api/v1/tours/top_5_tours': {
+      get: {
+        tags: ['Tours'],
+        summary: 'Get top 5 cheap tours',
+        responses: { '200': { description: 'List of top 5 tours' } }
+      }
+    },
+    '/api/v1/tours/tour-stats': {
+      get: {
+        tags: ['Tours'],
+        summary: 'Get tour statistics',
+        responses: { '200': { description: 'Tour statistics' } }
+      }
+    },
+    '/api/v1/tours/{id}': {
+      get: {
+        tags: ['Tours'],
+        summary: 'Get a tour by ID',
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        responses: { '200': { description: 'Tour details' } }
+      },
+      patch: {
+        tags: ['Tours'],
+        summary: 'Update a tour by ID',
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/Tour' }
+            }
+          }
+        },
+        responses: { '200': { description: 'Tour updated' } }
+      },
+      delete: {
+        tags: ['Tours'],
+        summary: 'Delete a tour by ID',
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        responses: { '204': { description: 'Tour deleted' } }
+      }
+    },
+    '/api/v1/tours/{tourId}/reviews': {
+      get: {
+        tags: ['Reviews'],
+        summary: 'Get reviews for a tour',
+        parameters: [
+          {
+            name: 'tourId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' }
+          }
+        ],
+        security: [{ bearerAuth: [] }],
+        responses: { '200': { description: 'List of reviews' } }
+      },
+      post: {
+        tags: ['Reviews'],
+        summary: 'Create a review for a tour',
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: 'tourId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' }
+          }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/Review' }
+            }
+          }
+        },
+        responses: { '201': { description: 'Review created' } }
+      }
+    },
+    '/api/v1/users/signup': {
+      post: {
+        tags: ['Users'],
+        summary: 'Sign up a new user',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/User' }
+            }
+          }
+        },
+        responses: { '201': { description: 'User created' } }
+      }
+    },
+    '/api/v1/users/login': {
+      post: {
+        tags: ['Users'],
+        summary: 'Log in a user',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  email: { type: 'string', format: 'email' },
+                  password: { type: 'string' }
+                }
+              }
+            }
+          }
+        },
+        responses: { '200': { description: 'Logged in successfully' } }
+      }
+    },
+    '/api/v1/users/me': {
+      get: {
+        tags: ['Users'],
+        summary: 'Get current user profile',
+        security: [{ bearerAuth: [] }],
+        responses: { '200': { description: 'User profile' } }
+      }
+    },
+    '/api/v1/users/forgotPassword': {
+      post: {
+        tags: ['Users'],
+        summary: 'Request password reset token',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: { email: { type: 'string', format: 'email' } }
+              }
+            }
+          }
+        },
+        responses: { '200': { description: 'Password reset token sent' } }
+      }
+    },
+    '/api/v1/users/resetPassword/{token}': {
+      patch: {
+        tags: ['Users'],
+        summary: 'Reset password using token',
+        parameters: [
+          {
+            name: 'token',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' }
+          }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  password: { type: 'string' },
+                  passwordConfirm: { type: 'string' }
+                }
+              }
+            }
+          }
+        },
+        responses: { '200': { description: 'Password reset' } }
+      }
+    },
+    '/api/v1/users/updatePassword': {
+      patch: {
+        tags: ['Users'],
+        summary: 'Update password for logged-in user',
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  passwordCurrent: { type: 'string' },
+                  password: { type: 'string' },
+                  passwordConfirm: { type: 'string' }
+                }
+              }
+            }
+          }
+        },
+        responses: { '200': { description: 'Password updated' } }
+      }
+    },
+    '/api/v1/users/updateMe': {
+      patch: {
+        tags: ['Users'],
+        summary: 'Update current user profile',
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  email: { type: 'string', format: 'email' }
+                }
+              }
+            }
+          }
+        },
+        responses: { '200': { description: 'User updated' } }
+      }
+    },
+    '/api/v1/users/deleteMe': {
+      delete: {
+        tags: ['Users'],
+        summary: 'Deactivate current user',
+        security: [{ bearerAuth: [] }],
+        responses: { '204': { description: 'User deleted' } }
+      }
+    },
+    '/api/v1/users/{id}': {
+      get: {
+        tags: ['Users'],
+        summary: 'Get a user by ID',
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        responses: { '200': { description: 'User data' } }
+      },
+      patch: {
+        tags: ['Users'],
+        summary: 'Update any user by ID',
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/User' }
+            }
+          }
+        },
+        responses: { '200': { description: 'User updated' } }
+      },
+      delete: {
+        tags: ['Users'],
+        summary: 'Delete any user by ID',
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        responses: { '204': { description: 'User deleted' } }
+      }
+    }
+  }
+};
+
+module.exports = swaggerSpec;
