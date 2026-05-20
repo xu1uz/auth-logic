@@ -44,6 +44,7 @@ const videoRouter = require('./routes/videoRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const cors=require('cors');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
@@ -51,6 +52,22 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger/swagger');
 
 app.use(helmet());
+
+app.use(
+  cors({
+    // თუ გინდა, რომ აბსოლუტურად ყველამ შეძლოს წვდომა, დატოვე '*'
+    // თუ მარტო ფრონტენდის საიტი გინდა, ჩაწერე: 'http://localhost:3000'
+    origin: '*', 
+    
+    // აქ გაწერილია ყველა ძირითადი HTTP მეთოდი, რაც პროექტს დასჭირდება
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    
+    // ეს საჭიროა, თუ ფრონტენდიდან ქუქიების (Cookies) ან ჰედერების გატანებას აპირებ
+    allowedHeaders: ['Content-Type', 'Authorization']
+  })
+);
+
+
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
