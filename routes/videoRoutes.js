@@ -12,6 +12,7 @@ router
   .post(
     authController.protect,
     authController.restrictTo('manager'),
+    videoController.uploadVideoFile,
     videoController.setCourseId,
     videoController.addVideo
   );
@@ -25,6 +26,7 @@ router
   .patch(
     authController.protect,
     authController.restrictTo('manager'),
+    videoController.uploadVideoFile,
     videoController.updateVideo
   );
 
