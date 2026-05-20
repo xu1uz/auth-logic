@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'guide', 'lead-guide', 'admin'],
+    enum: ['user', 'manager'],
     default: 'user'
   },
   password: {
@@ -46,6 +46,12 @@ const userSchema = new mongoose.Schema({
       message: 'passwords are not same!!'
     }
   },
+  enrolledCourses: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Course' 
+    }
+  ],
   passwordChangedAt: Date,
   passwordResetToken:String,
   passwordResetExpires:Date,

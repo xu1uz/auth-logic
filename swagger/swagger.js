@@ -11,7 +11,9 @@ const swaggerSpec = {
   tags: [
     { name: 'Tours', description: 'Tour operations' },
     { name: 'Users', description: 'User and auth operations' },
-    { name: 'Reviews', description: 'Review operations' }
+    { name: 'Reviews', description: 'Review operations' },
+    { name: 'Courses', description: 'Course operations' },
+    { name: 'Videos', description: 'Video operations' }
   ],
   components: {
     securitySchemes: {
@@ -41,6 +43,25 @@ const swaggerSpec = {
           review: { type: 'string' },
           rating: { type: 'number' },
           tour: { type: 'string' }
+        }
+      },
+      Course: {
+        type: 'object',
+        properties: {
+          title: { type: 'string' },
+          description: { type: 'string' },
+          price: { type: 'number' },
+          instructor: { type: 'string' }
+        }
+      },
+      Video: {
+        type: 'object',
+        properties: {
+          title: { type: 'string' },
+          videoFile: { type: 'string' },
+          duration: { type: 'number' },
+          description: { type: 'string' },
+          course: { type: 'string' }
         }
       }
     }
@@ -333,6 +354,156 @@ const swaggerSpec = {
           { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
         ],
         responses: { '204': { description: 'User deleted' } }
+      }
+    },
+    '/api/v2/courses': {
+      get: {
+        tags: ['Courses'],
+        summary: 'Get all courses',
+        responses: { '200': { description: 'List of courses' } }
+      }
+    },
+    '/api/v2/courses/addCourse': {
+      post: {
+        tags: ['Courses'],
+        summary: 'Create a new course',
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/Course' }
+            }
+          }
+        },
+        responses: { '201': { description: 'Course created successfully' } }
+      }
+    },
+    '/api/v2/courses/{id}': {
+      get: {
+        tags: ['Courses'],
+        summary: 'Get a course by ID with all videos',
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        responses: { '200': { description: 'Course with videos' } }
+      },
+      patch: {
+        tags: ['Courses'],
+        summary: 'Update a course by ID',
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/Course' }
+            }
+          }
+        },
+        responses: { '200': { description: 'Course updated' } }
+      },
+      delete: {
+        tags: ['Courses'],
+        summary: 'Delete a course by ID',
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        responses: { '204': { description: 'Course deleted' } }
+      }
+    },
+    '/api/v2/courses/{courseId}/videos': {
+      get: {
+        tags: ['Videos'],
+        summary: 'Get all videos for a course',
+        parameters: [
+          {
+            name: 'courseId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' }
+          }
+        ],
+        responses: { '200': { description: 'List of videos' } }
+      },
+      post: {
+        tags: ['Videos'],
+        summary: 'Add a video to a course',
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: 'courseId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' }
+          }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/Video' }
+            }
+          }
+        },
+        responses: { '201': { description: 'Video added successfully' } }
+      }
+    },
+    '/api/v2/courses/{courseId}/videos/{id}': {
+      get: {
+        tags: ['Videos'],
+        summary: 'Get a specific video',
+        parameters: [
+          {
+            name: 'courseId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' }
+          },
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        responses: { '200': { description: 'Video details' } }
+      },
+      patch: {
+        tags: ['Videos'],
+        summary: 'Update a video',
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: 'courseId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' }
+          },
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/Video' }
+            }
+          }
+        },
+        responses: { '200': { description: 'Video updated' } }
+      },
+      delete: {
+        tags: ['Videos'],
+        summary: 'Delete a video',
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: 'courseId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' }
+          },
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        responses: { '204': { description: 'Video deleted' } }
       }
     }
   }

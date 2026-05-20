@@ -39,6 +39,8 @@ const fs = require('fs');
 const morgan = require('morgan');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
+const courseRouter = require('./routes/courseRoutes');
+const videoRouter = require('./routes/videoRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -46,7 +48,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const swaggerUi = require('swagger-ui-express');
-const swaggerSpec=require('./swagger/swagger')
+const swaggerSpec = require('./swagger/swagger');
 
 app.use(helmet());
 
@@ -83,9 +85,6 @@ app.use(
 
 app.use(express.static(`${__dirname}/public`));
 
-
-
-
 /* app.use((req,res,next)=>{
   req.reqTime=new Date().toISOString();
   console.log("hello from midleware")
@@ -96,18 +95,24 @@ app.use(express.static(`${__dirname}/public`));
 
  */
 
-//swagger main / route
-app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
-
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v2/courses', courseRouter);
+app.use('/api/v2/videos', videoRouter);
 
 /* app.getAllTours("/api/v1/tours",getAllTours);
 app.post("/api/v1/tours",addTours);
 app.get("/api/v1/tours/:id",getTours);
 app.patch("/api/v1/tours/:id",editTours);
 app.delete("/api/v1/tours/:id", deleteTours ); */
+
+//swagger main / route
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, { explorer: true })
+);
 
 app.all('*', (req, res, next) => {
   /*  res.status(404)
