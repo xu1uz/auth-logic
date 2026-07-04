@@ -26,9 +26,8 @@ exports.deleteOne = Model =>
       }
   
       res.status(200).json({
-        data: {
-           doc
-        }
+        data: doc
+        
       });
     
     }
