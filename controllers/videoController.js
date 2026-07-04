@@ -54,20 +54,25 @@ exports.setCourseId = (req, res, next) => {
 
 
 exports.addVideo = catchAsync(async (req, res, next) => {
-  /*if (!req.file) {
-    return next(
-      new appError('Please upload a video file under the "video" field.', 400)
-    );
-  }*/
+  // 1. თუ ფაილია ატვირთული, ვიღებთ ფაილის სახელს
+  if (req.file) {
+    req.body.videoFile = req.file.filename;
+  } 
+  // 2. თუ ფაილი არ არის, მაგრამ მოვიდა იუთუბის ლინკი (req.body.videoFile)
+  // მაშინ არაფერს ვცვლით, რადგან req.body.videoFile უკვე გამოგზავნილია ფრონტიდან
+  else if (req.body.videoFile) {
+    // აქ ვტოვებთ როგორც არის
+  } 
+  // 3. თუ არც ფაილია და არც ლინკი, ვაბრუნებთ შეცდომას
+  else {
+    return next(new appError('Please upload a video file or provide a video link.', 400));
+  }
 
-  req.body.videoFile = req.file.filename;
   const doc = await Video.create(req.body);
 
   res.status(201).json({
     status: 'success',
-    data: {
-      doc
-    }
+    data: { doc }
   });
 });
 
