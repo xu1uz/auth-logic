@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true,
     minLength: [7, 'username must be more than 7'],
-    maxLength: [12, 'username must be less than 12'],
+  
     validate: [validator.isAlpha, 'name must only contain characters']
   },
   email: {
