@@ -12,6 +12,10 @@ const courseSchema = new mongoose.Schema({
   price: {
     type: Number
   },
+  image: {
+        type: String, // აქ შეინახავ ფოტოს URL-ს
+        required: [true, 'A course must have a cover image']
+    },
   instructor: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
