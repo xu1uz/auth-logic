@@ -50,12 +50,15 @@ exports.setCourseId = (req, res, next) => {
   next();
 };
 
+
+
+
 exports.addVideo = catchAsync(async (req, res, next) => {
-  if (!req.file) {
+  /*if (!req.file) {
     return next(
       new appError('Please upload a video file under the "video" field.', 400)
     );
-  }
+  }*/
 
   req.body.videoFile = req.file.filename;
   const doc = await Video.create(req.body);
