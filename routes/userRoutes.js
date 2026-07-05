@@ -33,4 +33,12 @@ router
   .patch(userController.updateUser)
   .delete(userController.deleteUser);
 
+  router
+  .route("/:id/enroll")
+  .patch(
+    authController.protect,
+    authController.restrictTo,
+    userController.addCourse
+  );
+
 module.exports = router;

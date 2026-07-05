@@ -41,3 +41,5 @@ exports.updateCourse = factory.editOne(Course);
 
 // კურსის წაშლა
 exports.deleteCourse = factory.deleteOne(Course);
+
+
