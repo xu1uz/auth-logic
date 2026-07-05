@@ -414,7 +414,40 @@ const swaggerSpec = {
         ],
         responses: { '204': { description: 'Course deleted' } }
       }
+    },////////////////////
+'/api/v1/users/{id}/enroll': {
+  patch: {
+    tags: ['Users'],
+    summary: 'Enroll a user to a course',
+    security: [{ bearerAuth: [] }],
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+    ],
+    requestBody: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              courseId: { type: 'string', description: 'The ID of the course' }
+            },
+            required: ['courseId']
+          }
+        }
+      }
     },
+    responses: {
+      '200': { description: 'User successfully enrolled' },
+      '401': { description: 'Unauthorized' },
+      '403': { description: 'Forbidden - Managers only' },
+      '404': { description: 'User or Course not found' }
+    }
+  }
+},
+//////////////
+
+
     '/api/v2/courses/{courseId}/videos': {
       get: {
         tags: ['Videos'],
