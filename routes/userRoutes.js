@@ -37,7 +37,7 @@ router
   .route("/:id/enroll")
   .patch(
     authController.protect,
-    authController.restrictTo,
+    authController.restrictTo("manager"),
     userController.addCourse
   );
 

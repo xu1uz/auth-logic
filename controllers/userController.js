@@ -139,6 +139,8 @@ exports.deleteUser = factory.deleteOne(User);
  */
 
 exports.addCourse = catchAsync(async (req, res, next) => {
+  console.log("params ID:", req.params.id);
+    console.log("body courseId:", req.body.courseId);
     // 1. იპოვე იუზერი და დაამატე კურსი მასივში
     const user = await User.findByIdAndUpdate(
         req.params.id, // URL-დან წამოსული იუზერის ID
