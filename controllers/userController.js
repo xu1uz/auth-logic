@@ -137,28 +137,23 @@ exports.deleteUser = factory.deleteOne(User);
   });
 };
  */
-
 exports.addCourse = catchAsync(async (req, res, next) => {
-  console.log("params ID:", req.params.id);
-    console.log("body courseId:", req.body.courseId);
-    // 1. იპოვე იუზერი და დაამატე კურსი მასივში
+    const { userId, courseId } = req.body; // ფორმიდან ორივე მოდის
+
+    // ვაახლებთ კონკრეტულ იუზერს
     const user = await User.findByIdAndUpdate(
-        req.params.id, // URL-დან წამოსული იუზერის ID
-        { $addToSet: { enrolledCourses: req.body.courseId } }, // $addToSet - დაამატებს მხოლოდ თუ არ არსებობს
+        userId,
+        { $addToSet: { enrolledCourses: courseId } },
         { new: true, runValidators: true }
     );
 
-    // 2. თუ იუზერი არ არსებობს
     if (!user) {
-        return next(new AppError('No user found with that ID', 404));
+        return next(new AppError('User not found', 404));
     }
 
-    // 3. წარმატებული პასუხი
     res.status(200).json({
         status: 'success',
-        data: {
-            user
-        }
+        data: { user }
     });
 });
 

@@ -22,6 +22,15 @@ router.patch("/updateMe",authController.protect,
   userController.updateMe);
 router.delete("/deleteMe",authController.protect,userController.deleteMe);
 
+
+  router
+  .route("/enroll")
+  .patch(
+    authController.protect,
+    authController.restrictTo("manager"),
+    userController.addCourse
+  );
+
 router
   .route('/')
   .get(userController.getAllUsers)
@@ -33,12 +42,6 @@ router
   .patch(userController.updateUser)
   .delete(userController.deleteUser);
 
-  router
-  .route("/:id/enroll")
-  .patch(
-    authController.protect,
-    authController.restrictTo("manager"),
-    userController.addCourse
-  );
+
 
 module.exports = router;
