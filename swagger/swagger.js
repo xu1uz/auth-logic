@@ -460,6 +460,59 @@ const swaggerSpec = {
   }
 },
 
+'/api/v1/courses/{courseId}/progress': {
+  get: {
+    tags: ['Progress'],
+    summary: 'Get course progress for current user',
+    description: 'აბრუნებს კურსის სრულ პროგრესს: ჯამურ პროცენტს და ყველა ვიდეოს სტატუსს',
+    security: [{ bearerAuth: [] }],
+    parameters: [
+      { 
+        name: 'courseId', 
+        in: 'path', 
+        required: true, 
+        schema: { type: 'string' },
+        description: 'კურსის ID'
+      }
+    ],
+    responses: {
+      '200': { 
+        description: 'Progress retrieved successfully',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                status: { type: 'string' },
+                data: {
+                  type: 'object',
+                  properties: {
+                    totalVideos: { type: 'integer' },
+                    percentage: { type: 'integer' },
+                    videos: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          videoId: { type: 'string' },
+                          title: { type: 'string' },
+                          isCompleted: { type: 'boolean' },
+                          progress: { type: 'number' }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      '404': { description: 'Course or Progress not found' }
+    }
+  }
+},
+
 '/api/v1/users/enroll': {
   patch: {
     tags: ['Users'],
