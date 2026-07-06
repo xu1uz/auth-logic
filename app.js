@@ -41,6 +41,7 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const courseRouter = require('./routes/courseRoutes');
 const videoRouter = require('./routes/videoRoutes');
+const progressRouter=require('./routes/progressRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -117,6 +118,7 @@ app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v2/courses', courseRouter);
 app.use('/api/v2/videos', videoRouter);
+app.use('/api/v2/progress', progressRouter);
 
 /* app.getAllTours("/api/v1/tours",getAllTours);
 app.post("/api/v1/tours",addTours);

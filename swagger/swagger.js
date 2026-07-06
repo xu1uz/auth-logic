@@ -415,6 +415,50 @@ const swaggerSpec = {
         responses: { '204': { description: 'Course deleted' } }
       }
     },////////////////////
+
+'/api/v1/progress/{userId}/{courseId}': {
+  get: {
+    tags: ['Progress'],
+    summary: 'Get user progress for a specific course',
+    security: [{ bearerAuth: [] }],
+    parameters: [
+      { name: 'userId', in: 'path', required: true, schema: { type: 'string' } },
+      { name: 'courseId', in: 'path', required: true, schema: { type: 'string' } }
+    ],
+    responses: {
+      '200': { description: 'Progress retrieved successfully' },
+      '404': { description: 'Progress not found' }
+    }
+  },
+  patch: {
+    tags: ['Progress'],
+    summary: 'Update user progress for a video',
+    security: [{ bearerAuth: [] }],
+    parameters: [
+      { name: 'userId', in: 'path', required: true, schema: { type: 'string' } },
+      { name: 'courseId', in: 'path', required: true, schema: { type: 'string' } }
+    ],
+    requestBody: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              videoId: { type: 'string' },
+              isCompleted: { type: 'boolean' }
+            },
+            required: ['videoId', 'isCompleted']
+          }
+        }
+      }
+    },
+    responses: {
+      '200': { description: 'Progress updated successfully' }
+    }
+  }
+},
+
 '/api/v1/users/enroll': {
   patch: {
     tags: ['Users'],
