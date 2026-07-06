@@ -416,7 +416,7 @@ const swaggerSpec = {
       }
     },////////////////////
 
-'/api/v1/progress/{userId}/{courseId}': {
+'/api/v2/progress/{userId}/{courseId}': {
   get: {
     tags: ['Progress'],
     summary: 'Get user progress for a specific course',
@@ -460,7 +460,7 @@ const swaggerSpec = {
   }
 },
 
-'/api/v1/courses/{courseId}/progress': {
+'/api/v2/courses/{courseId}/progress': {
   get: {
     tags: ['Progress'],
     summary: 'Get course progress for current user',
