@@ -3,42 +3,44 @@ const AppError = require('./../utils/appError');
 const factory = require('./handlerFactory');
 const Progress = require('../models/progresModel');
 
-
-
 exports.updateProgress = catchAsync(async (req, res, next) => {
+  console.log("REQ.BODY:", req.body);
   const { userId, courseId } = req.params;
-  const { videoId, isCompleted, progres } = req.body;
+  const { videoId, isCompleted, progress } = req.body;
 
-  // 1. ვცდილობთ ვიპოვოთ
-  let progress = await Progress.findOne({ user: userId, course: courseId });
+  let doc = await Progress.findOne({ user: userId, course: courseId });
 
-  // 2. თუ არ არსებობს, ვქმნით
-  if (!progress) {
-    progress = await Progress.create({
+  if (!doc) {
+    doc = await Progress.create({
       user: userId,
       course: courseId,
-      progress:progres,
-      videoProgress: [{ video: videoId, isCompleted }]
+      videoProgress: [{ video: videoId, isCompleted, progress }]
     });
   } else {
-    // 3. თუ არსებობს, ვანახლებთ
-    progress = await Progress.findOneAndUpdate(
-      { user: userId, course: courseId, "videoProgress.video": videoId },
-      { $set: { "videoProgress.$.isCompleted": isCompleted } },
-      { new: true }
+    // 1. განახლება returnDocument: 'after'-ით
+    const updated = await Progress.findOneAndUpdate(
+      { _id: doc._id, "videoProgress.video": videoId },
+      { 
+        $set: { 
+          "videoProgress.$.isCompleted": isCompleted,
+          "videoProgress.$.progress": progress 
+        } 
+      },
+      { returnDocument: 'after' } // აქ შევცვალეთ
     );
-    
-    // თუ ვიდეო მასივში ჯერ არ არის, მაშინ უბრალოდ ვუმატებთ
-    if (!progress) {
-      progress = await Progress.findByIdAndUpdate(
-        progress._id,
-        { $push: { videoProgress: { video: videoId, isCompleted } } },
-        { new: true }
+
+    if (!updated) {
+      doc = await Progress.findByIdAndUpdate(
+        doc._id,
+        { $push: { videoProgress: { video: videoId, isCompleted, progress } } },
+        { returnDocument: 'after' } // აქაც შევცვალეთ
       );
+    } else {
+      doc = updated;
     }
   }
 
-  res.status(200).json({ status: 'success', data: progress });
+  res.status(200).json({ status: 'success', data: doc });
 });
 
 exports.getProgress = catchAsync(async (req, res, next) => {

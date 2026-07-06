@@ -42,4 +42,51 @@ exports.updateCourse = factory.editOne(Course);
 // კურსის წაშლა
 exports.deleteCourse = factory.deleteOne(Course);
 
+exports.getCourse = catchAsync(async (req, res, next) => {
+  const { id: courseId } = req.params; // ვივარაუდოთ, რომ რუთში 'id' გაქვს
+  const userId = req.user.id;          // იუზერი, რომელიც ლოგინშია
 
+  // 1. კურსის წამოღება
+  const course = await Course.findById(courseId);
+  if (!course) {
+    return next(new AppError('კურსი ვერ მოიძებნა', 404));
+  }
+
+  // 2. პროგრესის აგრეგაცია (სტატისტიკის გამოთვლა)
+  const stats = await Progress.aggregate([
+    { $match: { user: userId, course: courseId } },
+    { $unwind: "$videoProgress" },
+    {
+      $group: {
+        _id: "$course",
+        totalVideos: { $sum: 1 },
+        completedVideos: { 
+          $sum: { $cond: ["$videoProgress.isCompleted", 1, 0] } 
+        }
+      }
+    },
+    {
+      $project: {
+        totalVideos: 1,
+        completedVideos: 1,
+        percentage: { 
+          $multiply: [{ $divide: ["$completedVideos", "$totalVideos"] }, 100] 
+        }
+      }
+    }
+  ]);
+
+  // 3. შედეგის აწყობა
+  // თუ course.toObject()-ს გამოიყენებ, უფრო უსაფრთხოა ვიდრე ._doc
+  const courseObj = course.toObject ? course.toObject() : course;
+  
+  const result = {
+    ...courseObj,
+    progressPercentage: stats.length > 0 ? Math.round(stats[0].percentage) : 0
+  };
+
+  res.status(200).json({
+    status: 'success',
+    data: result
+  });
+});
