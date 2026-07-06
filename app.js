@@ -84,7 +84,7 @@ const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   message: 'too many requests, pleace try again leiter'
 });
-app.use('/api', limiter);
+//app.use('/api', limiter);
 
 app.use(express.json());
 
