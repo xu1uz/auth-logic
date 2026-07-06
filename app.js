@@ -118,7 +118,7 @@ app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v2/courses', courseRouter);
 app.use('/api/v2/videos', videoRouter);
-app.use('/api/v2/progress', progressRouter);
+app.use('/api/v1/progress', progressRouter);
 
 /* app.getAllTours("/api/v1/tours",getAllTours);
 app.post("/api/v1/tours",addTours);
