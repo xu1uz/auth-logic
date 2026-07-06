@@ -17,6 +17,10 @@ const progressSchema = new mongoose.Schema({
       isCompleted: {
          type: Boolean,
           default: false },
+          progress:{
+            type: Number,
+            default: 0
+          },
       watchedAt: {
          type: Date,
           default: Date.now }

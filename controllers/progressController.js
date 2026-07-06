@@ -7,7 +7,7 @@ const Progress = require('../models/progresModel');
 
 exports.updateProgress = catchAsync(async (req, res, next) => {
   const { userId, courseId } = req.params;
-  const { videoId, isCompleted } = req.body;
+  const { videoId, isCompleted, progres } = req.body;
 
   // 1. ვცდილობთ ვიპოვოთ
   let progress = await Progress.findOne({ user: userId, course: courseId });
@@ -17,6 +17,7 @@ exports.updateProgress = catchAsync(async (req, res, next) => {
     progress = await Progress.create({
       user: userId,
       course: courseId,
+      progress:progres,
       videoProgress: [{ video: videoId, isCompleted }]
     });
   } else {
@@ -43,7 +44,7 @@ exports.updateProgress = catchAsync(async (req, res, next) => {
 exports.getProgress = catchAsync(async (req, res, next) => {
   // რადგან რუთია /:userId/:courseId, პარამეტრები ასე უნდა აიღო:
   const { userId, courseId } = req.params;
-
+ 
   const doc = await Progress.findOne({ 
     user: userId, 
     course: courseId 

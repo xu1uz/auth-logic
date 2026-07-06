@@ -446,7 +446,8 @@ const swaggerSpec = {
             type: 'object',
             properties: {
               videoId: { type: 'string' },
-              isCompleted: { type: 'boolean' }
+              isCompleted: { type: 'boolean' },
+              progress:{type:'Number'}
             },
             required: ['videoId', 'isCompleted']
           }
