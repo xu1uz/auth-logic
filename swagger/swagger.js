@@ -513,6 +513,43 @@ const swaggerSpec = {
   }
 },
 
+'/api/v1/progress/getAllCourses': {
+  get: {
+    tags: ['Progress'],
+    summary: 'Get all enrolled courses progress',
+    description: 'აბრუნებს იუზერის ყველა დარეგისტრირებული კურსის პროგრესს',
+    security: [{ bearerAuth: [] }],
+    responses: {
+      '200': {
+        description: 'Courses progress retrieved successfully',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                status: { type: 'string', example: 'success' },
+                user: { type: 'string', example: '6a0d6a0e5a9497140bcacfd3' },
+                data: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      courseId: { type: 'string' },
+                      courseName: { type: 'string' },
+                      percentage: { type: 'integer', example: 45 }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      '401': { description: 'Unauthorized' }
+    }
+  }
+},
+
 '/api/v1/users/enroll': {
   patch: {
     tags: ['Users'],

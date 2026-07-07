@@ -36,8 +36,10 @@ router
     authController.protect,
     authController.restrictTo('manager'),
     courseController.deleteCourse
-  );
+  )
 
 
+
+  
 
 module.exports = router;

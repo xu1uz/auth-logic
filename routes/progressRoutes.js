@@ -4,6 +4,10 @@ const authController = require('./../controllers/authController');
 const router = express.Router();
 const mongoose = require('mongoose');
 
+
+router.route('/getAllCourses')
+.get(authController.protect,
+  progressController.getAllEnrolledCoursesProgress);
 // routes/progressRoutes.js
 router.route('/:userId/:courseId')
   .get(authController.protect,

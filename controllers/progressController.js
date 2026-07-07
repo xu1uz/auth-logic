@@ -5,6 +5,7 @@ const Progress = require('../models/progresModel');
 const mongoose = require('mongoose');
 const Course = require('../models/courseModel');
 const Video=require('../models/videoModel');
+const User=require('../models/userModel');
 
 exports.updateProgress = catchAsync(async (req, res, next) => {
   console.log("REQ.BODY:", req.body);
@@ -109,5 +110,54 @@ exports.getMyCourseProgress = catchAsync(async (req, res, next) => {
       percentage: Math.round(percentage), // აბრუნებს 0-100-ს შორის
       videos: result
     }
+  });
+});
+
+
+
+
+exports.getAllEnrolledCoursesProgress = catchAsync(async (req, res, next) => {
+  const userId = req.user.id;
+
+  // 1. მოვიტანოთ იუზერი თავისი დარეგისტრირებული კურსებით
+  const user = await User.findById(userId).populate('enrolledCourses');
+  
+  if (!user || !user.enrolledCourses) {
+    return res.status(200).json({ status: 'success', data: [] });
+  }
+
+  // 2. თითოეული კურსისთვის პარალელურად დავთვალოთ პროგრესი
+  const coursesProgress = await Promise.all(
+    user.enrolledCourses.map(async (course) => {
+      // ვიღებთ ყველა ვიდეოს ამ კურსისთვის
+      const allVideos = await Video.find({ course: course._id });
+      
+      // ვიღებთ იუზერის პროგრესს ამ კურსისთვის
+      const userProgress = await Progress.findOne({ user: userId, course: course._id });
+      const watchedVideos = userProgress ? userProgress.videoProgress : [];
+
+      // ვითვლით პროცენტს (ჯამური პროგრესის საშუალო)
+      const totalVideos = allVideos.length;
+      const totalProgressSum = allVideos.reduce((sum, video) => {
+        const progressData = watchedVideos.find(
+          (vp) => vp.video.toString() === video._id.toString()
+        );
+        return sum + (progressData ? progressData.progress : 0);
+      }, 0);
+
+      const percentage = totalVideos > 0 ? Math.round(totalProgressSum / totalVideos) : 0;
+
+      return {
+        courseId: course._id,
+        courseName: course.name, // ან რა ველსაც იყენებ სახელისთვის
+        percentage: percentage
+      };
+    })
+  );
+
+  res.status(200).json({
+    status: 'success',
+    user:user.id,
+    data: coursesProgress
   });
 });
