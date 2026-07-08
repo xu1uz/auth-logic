@@ -34,7 +34,20 @@ exports.getCourseWithVideos = catchAsync(async (req, res, next) => {
 });
 
 // ყველა კურსის მიღება
-exports.getAllCourses = factory.getAll(Course);
+exports.getAllCourses = catchAsync(async (req, res, next) => {
+  // 1. მოგვაქვს ყველა კურსი
+  // თუ გინდა კურსთან დაკავშირებული ვიდეოებიც გამოჩნდეს, დაამატე .populate('videos')
+  const courses = await Course.find();
+
+  // 2. ვაბრუნებთ პასუხს
+  res.status(200).json({
+    status: 'success',
+    results: courses.length,
+    data: {
+      courses // აქ ბრუნდება კურსების სრული ობიექტი
+    }
+  });
+});
 
 // კურსის განახლება
 exports.updateCourse = factory.editOne(Course);

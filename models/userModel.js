@@ -18,6 +18,9 @@ const userSchema = new mongoose.Schema({
     trim: true,
     validate: [validator.isEmail, 'enter valid email!!!']
   },
+    lastLogin:{
+      type: Date
+    },
   photo: {
     type: String,
     default:"default.jpg"
@@ -60,6 +63,7 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken:String,
   passwordResetExpires:Date,
+
   isActive:{
     type:Boolean,
     default:true,
@@ -112,6 +116,22 @@ userSchema.methods.createPasswordResetToken = function() {
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
   return resetToken;
+};
+
+
+
+// userModel.js-ში
+
+// სქემის დამატება
+userSchema.methods.updateLastLogin = async function() {
+  const now = new Date();
+  
+  // თუ lastLogin უკვე არსებობს და ახალი დრო მეტია ძველზე, ვაახლებთ
+  // თუ არ არსებობს (null-ია), პირდაპირ ვანიჭებთ
+  if (!this.lastLogin || now > this.lastLogin) {
+    this.lastLogin = now;
+    await this.save({ validateBeforeSave: false }); // ვალიდაციის გარეშე, რომ პაროლი არ მოგვთხოვოს
+  }
 };
 
 const User = mongoose.model('User', userSchema);
