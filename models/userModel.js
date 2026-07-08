@@ -31,6 +31,9 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'manager'],
     default: 'user'
   },
+  department:{
+    type: String
+  },
   password: {
     type: String,
     required: true,
